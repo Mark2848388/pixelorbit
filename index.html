@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080d1b">
+<title>PIXEL ORBIT: INFINITE</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game">
+  <header class="top">
+    <div class="profile"><div class="avatar">◈</div><div><b>ПИЛОТ-07</b><small>УРОВЕНЬ <span id="level">1</span></small><div class="xp"><i id="xpbar"></i></div></div></div>
+    <div class="money"><span>✦</span><b id="coins">0</b><small>ОРБИТАЛЬНЫЕ КРЕДИТЫ</small></div>
+    <button class="iconbtn" id="pause">Ⅱ</button>
+  </header>
+  <section class="hud">
+    <div class="mission"><small>ТЕКУЩАЯ ЦЕЛЬ</small><b>ЗАЩИТИ ЯДРО</b><div class="bar"><i id="hpbar"></i></div><small id="hptext">100 / 100</small></div>
+    <div class="wave"><small>ВОЛНА</small><b id="wave">01</b><small id="wprog">0 / 11</small></div>
+  </section>
+  <main id="arenaWrap">
+    <canvas id="arena"></canvas>
+    <div class="arenaLabel">СЕКТОР <span id="sectorLabel">01</span> <span>● LIVE</span> <em id="combo"></em></div>
+    <div id="toast"></div>
+    <div class="levelup" id="treeBox"><div class="panel wide"><small>МОДУЛИ ЯДРА</small><h2>ДРЕВО НАВЫКОВ</h2><p>ОЧКИ: <b id="sp">0</b> ◆</p><div id="treeGrid"></div><button class="big" id="closeTree">ЗАКРЫТЬ</button></div></div>
+    <div class="paused" id="paused"><div class="panel"><h2 id="ptitle">ПАУЗА</h2><p id="pmsg"></p><button class="big" id="resume">ПРОДОЛЖИТЬ</button><button class="big" id="snd">ЗВУК: ВКЛ</button></div></div>
+  </main>
+  <nav class="commandNav" id="commandNav">
+    <button data-page="base" class="active">⌂<small>БАЗА</small></button>
+    <button data-page="skills">✧<small>НАВЫКИ</small></button>
+    <button data-page="fleet">◈<small>ФЛОТ</small></button>
+    <button data-page="tech">⌘<small>ТЕХНО</small></button>
+    <button data-page="map">◎<small>КАРТА</small></button>
+    <button data-page="more">⋯<small>ЕЩЁ</small></button>
+  </nav>
+  <section class="bottomStats"><div><small>УРОН ТАПА</small><b id="damage">10</b></div><div><small>КРИТ</small><b id="crit">5%</b></div><div><small>УБИЙСТВА</small><b id="kills">0</b></div></section>
+  <footer>
+    <div class="controls">
+      <button class="action" id="repair"><span>✚</span><small>РЕМОНТ <em>25✦</em></small></button>
+      <button class="action" id="power"><span>✧</span><small>ИМПУЛЬС <em>40✦</em></small></button>
+      <button class="action" id="tree"><span>⬡</span><small>НАВЫКИ <em id="spb">0◆</em></small></button>
+    </div>
+    <div class="hint">ТАПАЙ ПО ВРАГАМ · ТАПАЙ ПО ЯДРУ — ДОБЫЧА КРЕДИТОВ</div>
+  </footer>
+</div>
+<div id="commandLayer" class="commandLayer" aria-hidden="true">
+  <div class="commandPanel">
+    <div class="commandHead"><div><small>PIXEL ORBIT // КОМАНДНЫЙ ЦЕНТР</small><h2 id="pageTitle">БАЗА</h2></div><button id="closeCommand" aria-label="Закрыть">✕</button></div>
+    <div class="resourceStrip"><span>✦ <b id="rCoins">0</b></span><span>◆ <b id="rCrystals">0</b></span><span>⚙ <b id="rParts">0</b></span><span>⌁ <b id="rEnergy">0</b></span></div>
+    <div id="pageContent"></div>
+  </div>
+</div>
+<script src="game.js"></script>
+<script src="systems.js"></script>
+</body></html>
