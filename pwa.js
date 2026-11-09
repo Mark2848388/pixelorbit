@@ -1,4 +1,4 @@
-// Pixel Orbit Infinite PWA bootstrap
+// Pixel Orbit Infinite PWA bootstrap — fullscreen build
 (() => {
   if (!("serviceWorker" in navigator)) return;
   window.addEventListener("load", () => {

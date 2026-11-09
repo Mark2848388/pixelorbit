@@ -7,10 +7,10 @@
   "dir": "ltr",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "display_override": [
-    "standalone",
-    "minimal-ui"
+    "fullscreen",
+    "standalone"
   ],
   "orientation": "portrait",
   "background_color": "#0d1223",
@@ -64,5 +64,6 @@
         }
       ]
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

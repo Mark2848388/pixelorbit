@@ -62,3 +62,43 @@ input[type=email],input[type=password]{width:100%;background:#10131b;border:2px 
 .po-raid-hp{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:#c49bb8}.po-raid-hp b{color:#ffe4f3}.po-raid-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.po-raid-stats>div{padding:7px 4px;text-align:center;background:rgba(10,12,24,.48);border:1px solid rgba(190,126,165,.2);border-radius:7px}.po-raid-stats b{display:block;color:#fff;font-size:12px}.po-raid-stats small{display:block;font-size:7px;color:#c49bb8;margin-top:3px}.po-raid-board{margin-top:12px}.po-raid-board>b{font-size:9px;color:#eac5dc;letter-spacing:.06em}.po-raid-board>div{margin-top:5px;font-size:9px;color:#b9a2b5}.po-raid-note{display:block;margin-top:10px;font-size:8px;line-height:1.5;color:#b79bb2}
 .po-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(5,8,16,.82);padding:20px;align-items:center;justify-content:center}.po-modal.show{display:flex}.po-modal-card{position:relative;width:min(100%,420px);max-height:85vh;overflow:auto;padding:18px;border:1px solid #526080;border-radius:14px;background:#1b2233;box-shadow:0 20px 70px rgba(0,0,0,.55)}.po-modal-close{position:absolute;right:10px;top:10px;border:0;background:#30394e;color:#fff;border-radius:8px;padding:7px 10px}.po-profile-head{display:flex;align-items:center;gap:12px;padding:8px 28px 14px 0}.po-profile-avatar{width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#7b5bb4,#e36d9b);font-size:25px;color:#fff}.po-profile-head h3{margin:0 0 4px;font-size:16px}.po-profile-head small{font-size:9px;color:#aeb8d2}.po-profile-head p{margin:7px 0 0;font-size:9px;color:#aeb8d2}.po-profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.po-profile-stats>div{padding:10px 5px;text-align:center;border:1px solid #35415d;border-radius:8px;background:#151b29}.po-profile-stats b{display:block;color:#f2f5ff;font-size:14px}.po-profile-stats small{display:block;color:#8d9ab7;font-size:7px;margin-top:4px}.po-profile-actions{display:flex;gap:8px;margin-top:14px}
 .po-friend-avatar{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,#5e7cae,#9b6ac2);color:#fff;font-size:11px;font-weight:800;flex:0 0 auto}
+
+
+/* ===== PWA FULLSCREEN / EDGE-TO-EDGE ===== */
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  overscroll-behavior: none;
+}
+#game {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 600px;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: 0;
+  box-sizing: border-box;
+}
+.tabs {
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+}
+@media (display-mode: fullscreen) {
+  html, body { background: #191c25; }
+  #game {
+    max-width: none;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+@media (display-mode: standalone) {
+  #game {
+    border-left: 0;
+    border-right: 0;
+  }
+}
