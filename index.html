@@ -2,54 +2,73 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#080d1b">
-<title>PIXEL ORBIT: INFINITE</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#191c25">
+<title>PIXEL ORBIT INFINITE v4.3</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="game">
   <header class="top">
-    <div class="profile"><div class="avatar">◈</div><div><b>ПИЛОТ-07</b><small>УРОВЕНЬ <span id="level">1</span></small><div class="xp"><i id="xpbar"></i></div></div></div>
-    <div class="money"><span>✦</span><b id="coins">0</b><small>ОРБИТАЛЬНЫЕ КРЕДИТЫ</small></div>
+    <button class="profile" id="goProfile"><img class="avatar" id="avatarImg" alt=""><div><b id="pname">ПИЛОТ-07</b><small id="ptitle">Новобранец</small><div class="xp"><i id="xpbar"></i></div></div></button>
+    <div class="money"><div><span>✦</span><b id="coins">0</b></div><div class="parts"><span>⚙</span><b id="parts">0</b></div></div>
     <button class="iconbtn" id="pause">Ⅱ</button>
   </header>
-  <section class="hud">
-    <div class="mission"><small>ТЕКУЩАЯ ЦЕЛЬ</small><b>ЗАЩИТИ ЯДРО</b><div class="bar"><i id="hpbar"></i></div><small id="hptext">100 / 100</small></div>
-    <div class="wave"><small>ВОЛНА</small><b id="wave">01</b><small id="wprog">0 / 11</small></div>
-  </section>
-  <main id="arenaWrap">
-    <canvas id="arena"></canvas>
-    <div class="arenaLabel">СЕКТОР <span id="sectorLabel">01</span> <span>● LIVE</span> <em id="combo"></em></div>
-    <div id="toast"></div>
-    <div class="levelup" id="treeBox"><div class="panel wide"><small>МОДУЛИ ЯДРА</small><h2>ДРЕВО НАВЫКОВ</h2><p>ОЧКИ: <b id="sp">0</b> ◆</p><div id="treeGrid"></div><button class="big" id="closeTree">ЗАКРЫТЬ</button></div></div>
-    <div class="paused" id="paused"><div class="panel"><h2 id="ptitle">ПАУЗА</h2><p id="pmsg"></p><button class="big" id="resume">ПРОДОЛЖИТЬ</button><button class="big" id="snd">ЗВУК: ВКЛ</button></div></div>
-  </main>
-  <nav class="commandNav" id="commandNav">
-    <button data-page="base" class="active">⌂<small>БАЗА</small></button>
-    <button data-page="skills">✧<small>НАВЫКИ</small></button>
-    <button data-page="fleet">◈<small>ФЛОТ</small></button>
-    <button data-page="tech">⌘<small>ТЕХНО</small></button>
-    <button data-page="map">◎<small>КАРТА</small></button>
-    <button data-page="more">⋯<small>ЕЩЁ</small></button>
-  </nav>
-  <section class="bottomStats"><div><small>УРОН ТАПА</small><b id="damage">10</b></div><div><small>КРИТ</small><b id="crit">5%</b></div><div><small>УБИЙСТВА</small><b id="kills">0</b></div></section>
-  <footer>
-    <div class="controls">
-      <button class="action" id="repair"><span>✚</span><small>РЕМОНТ <em>25✦</em></small></button>
-      <button class="action" id="power"><span>✧</span><small>ИМПУЛЬС <em>40✦</em></small></button>
-      <button class="action" id="tree"><span>⬡</span><small>НАВЫКИ <em id="spb">0◆</em></small></button>
-    </div>
-    <div class="hint">ТАПАЙ ПО ВРАГАМ · ТАПАЙ ПО ЯДРУ — ДОБЫЧА КРЕДИТОВ</div>
-  </footer>
-</div>
-<div id="commandLayer" class="commandLayer" aria-hidden="true">
-  <div class="commandPanel">
-    <div class="commandHead"><div><small>PIXEL ORBIT // КОМАНДНЫЙ ЦЕНТР</small><h2 id="pageTitle">БАЗА</h2></div><button id="closeCommand" aria-label="Закрыть">✕</button></div>
-    <div class="resourceStrip"><span>✦ <b id="rCoins">0</b></span><span>◆ <b id="rCrystals">0</b></span><span>⚙ <b id="rParts">0</b></span><span>⌁ <b id="rEnergy">0</b></span></div>
-    <div id="pageContent"></div>
+
+  <div id="pages">
+    <section class="page show" id="pg-battle">
+      <section class="hud">
+        <div class="mission"><small id="worldName">СЕКТОР · ОРИОН</small><b>ЗАЩИТИ ЯДРО</b><div class="bar"><i id="hpbar"></i></div><small id="hptext">100 / 100</small></div>
+        <div class="wave"><small>ВОЛНА</small><b id="wave">01</b><small id="wprog">0 / 11</small></div>
+      </section>
+      <main id="arenaWrap">
+        <canvas id="arena"></canvas>
+        <div class="arenaLabel">LIVE <span>●</span> <em id="combo"></em></div>
+        <div id="toast"></div>
+        <div class="levelup" id="treeBox"><div class="panel wide"><small>МОДУЛИ ЯДРА</small><h2>ДРЕВО НАВЫКОВ</h2><p>ОЧКИ: <b id="sp">0</b> ◆ &nbsp;(+1 за уровень, +2 за босса)</p><div id="treeGrid"></div><button class="big" id="closeTree">ЗАКРЫТЬ</button></div></div>
+      </main>
+      <footer>
+        <div class="bottomStats"><div><small>УРОН ТАПА</small><b id="damage">10</b></div><div><small>КРИТ</small><b id="crit">5%</b></div><div><small>УБИЙСТВА</small><b id="kills">0</b></div></div>
+        <div class="controls">
+          <button class="action" id="repair"><span>✚</span><small>РЕМОНТ <em id="repCost">25</em>✦</small></button>
+          <button class="action" id="power"><span>✧</span><small>ИМПУЛЬС <em>40</em>✦</small></button>
+          <button class="action" id="tree"><span>⬡</span><small>НАВЫКИ <em id="spb"></em></small></button>
+        </div>
+      </footer>
+    </section>
+
+    <section class="page" id="pg-station">
+      <div class="stage"><canvas id="stCv"></canvas>
+        <div class="stBar"><div id="stInfo">СТАНЦИЯ</div><button class="chip" id="collectAll">СОБРАТЬ ВСЁ</button></div>
+        <div class="stHint" id="stHint"></div>
+        <div class="sheet" id="stSheet"></div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-map">
+      <div class="stage"><canvas id="mapCv"></canvas>
+        <div class="stBar"><div>КАРТА МИРОВ</div><button class="chip" id="mapHome">⌖ МОЙ МИР</button></div>
+        <div class="sheet" id="mapCard"></div>
+      </div>
+    </section>
+
+    <section class="page" id="pg-profile"><div class="scroll" id="profBody"></div></section>
   </div>
+
+  <nav class="tabs" id="tabs">
+    <button data-t="battle" class="on"><i>◉</i><small>БОЙ</small><u></u></button>
+    <button data-t="station"><i>▣</i><small>СТАНЦИЯ</small><u></u></button>
+    <button data-t="map"><i>◎</i><small>КАРТА</small><u></u></button>
+    <button data-t="profile"><i>☺</i><small>ПРОФИЛЬ</small><u></u></button>
+  </nav>
+
+  <div class="paused" id="paused"><div class="panel"><h2 id="pTitle">ПАУЗА</h2><p id="pMsg"></p><button class="big" id="resume">ПРОДОЛЖИТЬ</button><button class="big" id="revive" style="display:none">ВОССТАНОВИТЬ ЯДРО</button></div></div>
+  <div class="paused" id="daily"><div class="panel"><small>ЕЖЕДНЕВНЫЙ БОНУС</small><h2 id="dTitle">ДЕНЬ 1</h2><div class="days" id="dDays"></div><p id="dMsg"></p><button class="big" id="dClaim">ЗАБРАТЬ</button></div></div>
+  <div class="paused" id="cropper"><div class="panel"><small>СВОЯ АВАТАРКА</small><canvas id="cropCv" width="200" height="200"></canvas><p>Двигай фото пальцем, масштаб — ползунком</p><input type="range" id="cropZ" min="100" max="300" value="100"><button class="big" id="cropOk">ГОТОВО</button><button class="big" id="cropNo">ОТМЕНА</button></div></div>
 </div>
 <script src="game.js"></script>
-<script src="systems.js"></script>
-</body></html>
+<script src="hub.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0"></script>
+<script src="online.js"></script>
+</body>
+</html>
