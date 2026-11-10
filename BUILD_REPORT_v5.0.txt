@@ -1,0 +1,28 @@
+PIXEL ORBIT INFINITE v5.0 — BUILD REPORT
+
+IMPLEMENTED
+- Developer console and server-side role checks.
+- Resources RPC updates existing cloud_saves JSON only; no implicit replacement when cloud save is missing.
+- Item catalog, rarity metadata, player inventory, grant RPC.
+- Player online restriction flag and client-side enforcement at sign-in.
+- Timed events with public active/upcoming event display.
+- World controls for 10 sectors; coin/enemy multipliers feed game world calculations; disabled sectors are blocked from map travel.
+- Developer audit log and overview.
+- Service worker cache bumped to v5.0.
+
+DATABASE
+- v5.0 migrations applied successfully to the connected Supabase project.
+- RLS enabled on all new public tables. Client write policies are intentionally absent. Mutations are performed through guarded RPCs.
+- Owner account is not auto-assigned: sign into the game, copy your Auth UID from Developer Control, and execute the generated INSERT in Supabase SQL Editor.
+
+CHECKS
+- node --check: game.js, hub.js, online.js, raid.js, push-client.js, pwa.js, service-worker.js, push-config.js.
+- manifest.webmanifest parses as JSON.
+- Archive integrity checked after packaging.
+
+LIMITATIONS / NOT VERIFIED
+- No Android browser end-to-end UI test or two-account test was run.
+- Resource grants require a target cloud_saves row.
+- Event reward distribution/quest progression is not implemented yet.
+- Item equipment and combat effects are not implemented yet.
+- Player restriction is an app-level online gate, not a Supabase Auth ban.

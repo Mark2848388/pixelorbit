@@ -2,9 +2,8 @@
   "id": "./",
   "name": "Pixel Orbit Infinite",
   "short_name": "Pixel Orbit",
-  "description": "Космическая idle-игра с прокачкой, друзьями и глобальными кооперативными рейдами.",
+  "description": "Космическая idle-игра с картой, навыками и кооперативными рейдами.",
   "lang": "ru",
-  "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
@@ -15,22 +14,16 @@
   "orientation": "portrait",
   "background_color": "#0d1223",
   "theme_color": "#191c25",
-  "categories": [
-    "games",
-    "entertainment"
-  ],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "icon-maskable-512.png",
@@ -38,32 +31,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "Открыть бой",
-      "short_name": "Бой",
-      "url": "./?tab=battle",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Профиль пилота",
-      "short_name": "Профиль",
-      "url": "./?tab=profile",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "prefer_related_applications": false
+  ]
 }

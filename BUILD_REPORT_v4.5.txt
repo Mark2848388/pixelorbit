@@ -1,0 +1,22 @@
+PIXEL ORBIT INFINITE v4.5 — BUILD REPORT
+
+SOURCE
+Built from the user's existing PixelOrbit_Infinite_v4.4_Friends_Coop.zip and current library source files.
+
+IMPLEMENTED
+- Five skill branches replacing the old three-column skill layout; 24 skills with descriptions, costs, prerequisites, and mechanics for damage, crit, armor, regen, shields, turret, beam, drones, passive income, exploration rewards.
+- Sector atlas with 10 worlds and 30 selectable exploration POIs; local save tracks discoveries and grants coins/parts.
+- Dedicated co-op boss arena page with animated Nebulon, realtime shared boss HP, player presence, contribution and attack UI. Existing Supabase RPC remains authoritative for damage/cooldown/rewards.
+- Web Push client, service-worker push + notificationclick handlers, subscription table migration, and Supabase Edge Function source for friend request and raid defeat notifications.
+- PWA manifest, icons, service worker registration.
+
+CHECKS
+- node --check: game.js, hub.js, online.js, raid.js, push-client.js, pwa.js, service-worker.js, push-config.js.
+- manifest.webmanifest parses as JSON.
+- Archive integrity checked after packaging.
+
+NOT VERIFIED
+- Not deployed to the user's Supabase project.
+- Push is not live until VAPID keys are generated, push-config.js is configured, SQL migration is applied, Edge Function is deployed and secrets are set.
+- Two-account raid test and real Android browser/PWA test were not run.
+- Existing v4.4 database schema is assumed present for global co-op raid.

@@ -36,8 +36,3 @@ PIXEL ORBIT INFINITE v4.4 — BUILD REPORT
 - Рейд теперь имеет авторитетное серверное здоровье/урон/кулдаун/награды, но пока не содержит отдельной серверной симуляции атак босса и матчмейкинга по комнатам.
 - Уровень пилота берётся из серверного профиля, но обновление профиля пока идёт от клиента; для соревновательного режима потребуется более строгая серверная проверка прогресса.
 - Вкладка должна быть открыта, чтобы пилот отображался онлайн.
-
-PWA BUILDER PACKAGE
-- Added Web App Manifest, 192/512 PNG icons (including maskable), service worker and registration bootstrap.
-- Offline app shell caching enabled; Supabase/network requests remain online-only.
-- PWABuilder should scan the published HTTPS URL.

@@ -1,11 +1,7 @@
-const CACHE_NAME = "pixel-orbit-v4-4-fullscreen-v2";
-const APP_SHELL = ["./", "./index.html", "./style.css", "./game.js", "./hub.js", "./online.js", "./pwa.js", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
-self.addEventListener("install", (event) => { event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())); });
-self.addEventListener("activate", (event) => { event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("pixel-orbit-") && key !== CACHE_NAME).map((key) => caches.delete(key)))).then(() => self.clients.claim())); });
-self.addEventListener("fetch", (event) => {
-  const request = event.request; if (request.method !== "GET") return; const url = new URL(request.url);
-  // Supabase Auth, REST, Realtime and external CDN requests intentionally remain network-only.
-  if (url.origin !== self.location.origin) return;
-  if (request.mode === "navigate") { event.respondWith(fetch(request).then((response) => { if (response && response.ok) { const copy=response.clone(); caches.open(CACHE_NAME).then((cache)=>cache.put("./index.html",copy)); } return response; }).catch(async () => (await caches.match(request)) || (await caches.match("./index.html")))); return; }
-  event.respondWith(caches.match(request).then((cached) => { if (cached) return cached; return fetch(request).then((response) => { if (response && response.ok) { const copy=response.clone(); caches.open(CACHE_NAME).then((cache)=>cache.put(request,copy)); } return response; }); }));
-});
+const CACHE_NAME='pixel-orbit-v50';
+const APP_SHELL=['./','./index.html','./style.css','./game.js','./hub.js','./online.js','./raid.js','./push-client.js','./push-config.js','./manifest.webmanifest'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+self.addEventListener('push',event=>{let data={title:'PIXEL ORBIT',body:'Новое событие в секторе.',url:'./'};try{data={...data,...(event.data?.json()||{})}}catch(e){}event.waitUntil(self.registration.showNotification(data.title,{body:data.body,icon:'./icon-192.png',badge:'./icon-192.png',tag:data.tag||'pixel-orbit-event',renotify:true,data:{url:data.url||'./'},vibrate:[120,60,120]}));});
+self.addEventListener('notificationclick',event=>{event.notification.close();const url=event.notification.data?.url||'./';event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{for(const c of list){if('focus'in c){c.navigate(url);return c.focus()}}return clients.openWindow(url)}));});
+self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===self.location.origin)e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request)));});

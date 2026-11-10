@@ -4,16 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#191c25">
-<meta name="description" content="Космическая idle-игра: сражения, развитие базы, друзья и совместные рейды.">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pixel Orbit">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>PIXEL ORBIT INFINITE v4.4</title>
-<link rel="stylesheet" href="style.css">
+<meta name="description" content="Pixel Orbit Infinite — космическая idle-игра с картой секторов, древом навыков и кооперативными рейдами."><title>PIXEL ORBIT INFINITE v5.0</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="game">
@@ -55,11 +47,21 @@
 
     <section class="page" id="pg-map">
       <div class="stage"><canvas id="mapCv"></canvas>
-        <div class="stBar"><div>КАРТА МИРОВ</div><button class="chip" id="mapHome">⌖ МОЙ МИР</button></div>
+        <div class="stBar"><div>АТЛАС СЕКТОРОВ</div><button class="chip" id="mapHome">⌖ МОЙ МИР</button></div>
         <div class="sheet" id="mapCard"></div>
       </div>
     </section>
 
+    <section class="page" id="pg-raid">
+      <div class="raid-stage">
+        <div class="raid-top"><div><small>ГЛОБАЛЬНЫЙ КООПЕРАТИВНЫЙ РЕЙД</small><b id="arenaRaidPhase">ФАЗА 1 · НЕБУЛОН</b></div><span id="arenaRaidPlayers">0 ПИЛОТОВ</span></div>
+        <canvas id="raidArena" aria-label="Арена кооперативного босса"></canvas>
+        <div class="raid-hud"><div class="raid-hp"><span>КОРПУС БОССА</span><b id="arenaRaidHp">250 000 / 250 000</b></div><div class="raid-hpbar"><i id="arenaRaidHpBar"></i></div><div class="raid-live" id="arenaRaidStatus">Подключись к рейду, чтобы войти на общую арену.</div></div>
+        <div class="raid-actions"><button class="btn" id="arenaRaidJoin">ВОЙТИ НА АРЕНУ</button><button class="btn go" id="arenaRaidAttack" disabled>⚔ АТАКОВАТЬ БОССА</button></div>
+        <div class="raid-lower"><div><b>ТВОЙ ВКЛАД</b><strong id="arenaRaidDamage">0</strong></div><div><b>УЧАСТНИКИ</b><strong id="arenaRaidTeam">Ожидание пилотов</strong></div></div>
+        <div class="raid-log" id="arenaRaidLog">Босс общий для всех пилотов. Урон и здоровье синхронизируются с сервером.</div>
+      </div>
+    </section>
     <section class="page" id="pg-profile"><div class="scroll" id="profBody"></div></section>
   </div>
 
@@ -67,7 +69,7 @@
     <button data-t="battle" class="on"><i>◉</i><small>БОЙ</small><u></u></button>
     <button data-t="station"><i>▣</i><small>СТАНЦИЯ</small><u></u></button>
     <button data-t="map"><i>◎</i><small>КАРТА</small><u></u></button>
-    <button data-t="profile"><i>☺</i><small>ПРОФИЛЬ</small><u></u></button>
+    <button data-t="raid"><i>☄</i><small>РЕЙД</small><u></u></button><button data-t="profile"><i>☺</i><small>ПРОФИЛЬ</small><u></u></button>
   </nav>
 
   <div class="paused" id="paused"><div class="panel"><h2 id="pTitle">ПАУЗА</h2><p id="pMsg"></p><button class="big" id="resume">ПРОДОЛЖИТЬ</button><button class="big" id="revive" style="display:none">ВОССТАНОВИТЬ ЯДРО</button></div></div>
@@ -78,6 +80,9 @@
 <script src="hub.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0"></script>
 <script src="online.js"></script>
+<script src="raid.js"></script>
+<script src="push-config.js"></script>
+<script src="push-client.js"></script>
 <script src="pwa.js"></script>
 </body>
 </html>

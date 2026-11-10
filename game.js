@@ -2,21 +2,32 @@
 const $=id=>document.getElementById(id),cv=$('arena'),ctx=cv.getContext('2d'),KEY='pixelorbit_v4',PO=window.PO={};
 /* ---------- данные ---------- */
 const TREE=[
-{id:'dmg',b:0,n:'СИЛА ТАПА',d:'+4 урона тапа',max:10},
-{id:'crit',b:0,n:'КРИТ',d:'+6% шанс крита (x2.5)',max:8,req:['dmg',2]},
-{id:'turret',b:0,n:'АВТО-ТУРЕЛЬ',d:'Урон и скорострельность',max:8,req:['dmg',2]},
-{id:'beam',b:0,n:'ЛУЧЕВОЙ МОДУЛЬ',d:'Центральный луч автоматически прожигает врага',max:5,req:['turret',2]},
-{id:'beam2',b:0,n:'РАЗДВОЕННЫЙ ЛУЧ',d:'Добавляет второй независимый луч',max:3,req:['beam',2]},
-{id:'drone',b:0,n:'ДРОНЫ',d:'+1 орбитальный дрон',max:4,req:['turret',2]},
-{id:'hp',b:1,n:'БРОНЯ',d:'+25 макс. здоровья',max:8},
-{id:'regen',b:1,n:'РЕГЕН',d:'+0.5 HP в секунду',max:6,req:['hp',2]},
-{id:'shield',b:1,n:'ЩИТ',d:'+20 щита, сам восстанавливается',max:5,req:['hp',2]},
-{id:'thorns',b:1,n:'ШИПЫ',d:'Враг ранит себя об ядро',max:5,req:['regen',2]},
-{id:'gold',b:2,n:'ТРОФЕИ',d:'+20% кредитов за убийство',max:8},
-{id:'mine',b:2,n:'ДОБЫЧА',d:'+2 кредита за тап по ядру',max:8,req:['gold',2]},
-{id:'xp',b:2,n:'ОБУЧЕНИЕ',d:'+15% опыта',max:5,req:['gold',2]},
-{id:'off',b:2,n:'ОФФЛАЙН',d:'Доход, пока игра свёрнута',max:5,req:['mine',2]}];
-const BR=['АТАКА','ЗАЩИТА','ЭКОНОМИКА'];
+{id:'dmg',b:0,n:'СИЛА ТАПА',d:'+4 базового урона за уровень. Усиливает каждый прямой выстрел.',max:10},
+{id:'crit',b:0,n:'КРИТИЧЕСКИЙ УДАР',d:'+6% шанс критического попадания (×2,5 урона).',max:8,req:['dmg',2]},
+{id:'overdrive',b:0,n:'ПЕРЕГРУЗКА',d:'+5% общего урона оружия за уровень.',max:8,req:['dmg',3]},
+{id:'pulseCore',b:0,n:'ИМПУЛЬСНОЕ ЯДРО',d:'+18 урона активного импульса за уровень.',max:5,req:['overdrive',2]},
+{id:'hp',b:1,n:'БРОНЯ КОРПУСА',d:'+25 максимального здоровья за уровень.',max:8},
+{id:'regen',b:1,n:'РЕГЕНЕРАЦИЯ',d:'+0,5 HP в секунду.',max:6,req:['hp',2]},
+{id:'shield',b:1,n:'ЭНЕРГОЩИТ',d:'+20 максимального щита, который восстанавливается.',max:5,req:['hp',2]},
+{id:'thorns',b:1,n:'ОТРАЖАЮЩАЯ БРОНЯ',d:'Враги получают ответный урон при атаке ядра.',max:5,req:['regen',2]},
+{id:'repairDrone',b:1,n:'РЕМОНТНЫЙ ДРОН',d:'+0,35 HP/с за уровень.',max:5,req:['regen',2]},
+{id:'turret',b:2,n:'АВТО-ТУРЕЛЬ',d:'Урон и скорострельность автоматической турели.',max:8,req:['dmg',2]},
+{id:'beam',b:2,n:'ПЛАЗМЕННЫЙ ЛУЧ',d:'Центральный луч автоматически прожигает врага.',max:5,req:['turret',2]},
+{id:'beam2',b:2,n:'РАЗДВОЕННЫЙ ЛУЧ',d:'Добавляет второй независимый лазерный луч.',max:3,req:['beam',2]},
+{id:'scanner',b:2,n:'СКАНЕР УЯЗВИМОСТЕЙ',d:'+2% критического шанса за уровень.',max:5,req:['beam',1]},
+{id:'capacitor',b:2,n:'СУПЕРКОНДЕНСАТОР',d:'+0,15 пассивных кредитов/с за уровень.',max:5,req:['turret',2]},
+{id:'drone',b:3,n:'БОЕВЫЕ ДРОНЫ',d:'+1 орбитальный дрон за уровень.',max:4,req:['turret',2]},
+{id:'guardian',b:3,n:'СТРАЖ ЯДРА',d:'Дроны наносят +8% урона за уровень.',max:5,req:['drone',1]},
+{id:'swarm',b:3,n:'РОЙ ПЕРЕХВАТЧИКОВ',d:'Каждые 5 уровней открывает дополнительного помощника.',max:3,req:['guardian',2]},
+{id:'repair',b:3,n:'АВАРИЙНЫЙ ПРОТОКОЛ',d:'+5 HP при переходе на новую волну за уровень.',max:5,req:['repairDrone',2]},
+{id:'gold',b:4,n:'ТРОФЕЙНЫЙ ПРОТОКОЛ',d:'+20% кредитов за убийство.',max:8},
+{id:'mine',b:4,n:'ГЛУБОКАЯ ДОБЫЧА',d:'+2 кредита за тап по ядру.',max:8,req:['gold',2]},
+{id:'xp',b:4,n:'НЕЙРООБУЧЕНИЕ',d:'+15% получаемого опыта.',max:5,req:['gold',2]},
+{id:'off',b:4,n:'АВТОНОМНЫЙ РЕЖИМ',d:'Увеличивает лимит и доход офлайн-прогресса.',max:5,req:['mine',2]},
+{id:'salvage',b:4,n:'ПЕРЕРАБОТКА',d:'+8% деталей с уничтоженных врагов за уровень.',max:5,req:['mine',2]},
+{id:'cartographer',b:4,n:'КАРТОГРАФ СЕКТОРОВ',d:'+10% наград за исследование карты.',max:5,req:['xp',2]}
+];
+const BR=['КЛИНКИ ХАОСА · АТАКА','ЩИТ И ВОССТАНОВЛЕНИЕ','ТЕХНОЛОГИИ И ОРУЖИЕ','ДРОНЫ И ПОДДЕРЖКА','ИССЛЕДОВАНИЕ И РЕСУРСЫ'];
 const WORLDS=[
 {n:'ОРИОН',d:'Тихий сектор. Идеален для старта.',bg:['#303b59','#242c43','#171c2b'],rc:['#f4b1d5','#b7c9f5','#f2a0bd'],hp:1,cm:1,sp:1,tn:null,req:0,pl:['#6fa8ff','#2a4d9a'],ring:0,x:300,y:1150},
 {n:'ПЕПЕЛ',d:'Вулканический мир. Враги быстрее.',bg:['#4d2a22','#34191a','#1b0e10'],rc:['#ffb36b','#ff7a3a','#ff5a5a'],hp:1.3,cm:1.3,sp:1.25,tn:'#ff7a3a',req:8,pl:['#ff9a4a','#8a2a10'],ring:0,x:130,y:980},
@@ -44,8 +55,8 @@ PO.WORLDS=WORLDS;PO.BLD=BLD;
 /* ---------- состояние ---------- */
 const fresh=()=>({coins:50,parts:20,kills:0,wave:1,wk:0,level:1,xp:0,best:1,hp:100,sh:0,sp:0,sk:{},snd:1,vib:1,fxq:1,world:0,wp:{},wb:{0:1},bld:[],size:0,prof:{name:'ПИЛОТ-07',avatar:'a0',title:0,accent:'#8fd0ff'},st:{taps:0,bosses:0,crit:0,combo:0,time:0,totalTime:0,built:0},daily:{last:'',streak:0},seen:{},t:Date.now()});
 let S=fresh(),W=0,H=0,enemies=[],shots=[],parts=[],texts=[],beamFx=[],paused=false,modal=false,over=false,frame=0,last=performance.now(),hidAt=0,combo=0,comboT=0,autoT=0,pulse=0,shake=0,bossFor=0,uiT=0,spawnT=0,helperT=[0,0,0],beamT=0,Bt=0,Bc=null,pal=[];
-const L=id=>S.sk[id]||0,rand=(a,c)=>a+Math.random()*(c-a),cw=()=>WORLDS[S.world]||WORLDS[0],vib=n=>{try{S.vib&&navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
-function B(){if(!Bc||Bt<=0){let b={dmg:4*L('dmg'),crit:.05+.06*L('crit'),hp:25*L('hp'),regen:.5*L('regen'),sh:20*L('shield'),coinM:1+.2*L('gold'),xpM:1+.15*L('xp'),mine:2*L('mine'),off:L('off'),drones:L('drone'),turret:L('turret'),thorns:12*L('thorns'),repair:0,passive:0,beam:L('beam'),beam2:L('beam2'),helperBonus:0,beamBonus:0,bonusM:1};
+const L=id=>S.sk[id]||0,rand=(a,c)=>a+Math.random()*(c-a),cw=()=>{let w=WORLDS[S.world]||WORLDS[0],c=PO.worldConfig?.[S.world];return c?{...w,hp:w.hp*Number(c.enemy_multiplier||1),cm:w.cm*Number(c.coin_multiplier||1)}:w},vib=n=>{try{S.vib&&navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
+function B(){if(!Bc||Bt<=0){let b={dmg:4*L('dmg'),crit:.05+.06*L('crit')+.02*L('scanner'),hp:25*L('hp'),regen:.5*L('regen')+.35*L('repairDrone'),sh:20*L('shield'),coinM:1+.2*L('gold'),xpM:1+.15*L('xp'),mine:2*L('mine'),off:L('off'),drones:L('drone'),turret:L('turret'),thorns:12*L('thorns'),repair:0,passive:.15*L('capacitor'),beam:L('beam'),beam2:L('beam2'),helperBonus:.08*L('guardian')+.12*L('swarm'),beamBonus:0,bonusM:1,damageM:1+.05*L('overdrive'),pulse:18*L('pulseCore'),mapBonus:.1*L('cartographer')};
  S.bld.forEach(o=>{let l=o.l,t=o.t;if(t=='gen')b.passive+=.3*l;if(t=='lab')b.xpM+=.08*l;if(t=='tur')b.turret+=.5*l;if(t=='dome')b.sh+=15*l;if(t=='dock'){b.repair+=.08*l;b.regen+=.3*l}if(t=='drl')b.mine+=l;if(t=='rad')b.crit+=.01*l;if(t=='bay')b.helperBonus+=.03*l;if(t=='array')b.beamBonus+=.05*l;if(t=='beacon')b.bonusM+=.04*l});b.coinM*=b.bonusM;b.xpM*=b.bonusM;Bc=b;Bt=.5}return Bc}
 const helperCount=()=>Math.min(3,1+Math.floor(Math.max(0,S.level-1)/5));
 const maxHp=()=>100+B().hp,maxSh=()=>B().sh,clickDmg=()=>14+B().dmg+Math.floor(S.wave/2),critCh=()=>Math.min(.85,B().crit),xpNeed=()=>Math.floor(10*Math.pow(1.3,S.level-1)),need=()=>8+3*S.wave,repCost=()=>Math.max(5,Math.round(25*(1-Math.min(.6,B().repair))));
@@ -64,9 +75,9 @@ function spawn(boss,px,py,mini){let w=S.wave,a=rand(0,6.283),rad=Math.max(W,H)*.
  enemies.push({x:px!=null?px:W/2+Math.cos(a)*rad,y:py!=null?py:H/2+Math.sin(a)*rad,hp,max:hp,t,r:mini?5:[8,6,11,20][t],s:(rand(22,32)+w*1.5)*[1,1.9,.6,.45][t]*wd.sp,hit:0,fl:0,st:2,boss:!!boss,sm:0});if(boss){toast('⚠ БОСС ВОЛНЫ');vib([80,40,80])}}
 function burst(x,y,c,n=8){if(!S.fxq)n=Math.ceil(n/3);for(let i=0;i<n;i++){let a=rand(0,6.283),v=rand(25,110);parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.2,.6),color:c})}}
 const txt=(x,y,s,c)=>texts.push({x,y,s,c,life:.8});
-function hurt(e,d,crit){if(e.dead)return;e.hp-=d;e.fl=.08;txt(e.x,e.y-10,Math.round(d),crit?'#ffd36b':'#fff');burst(e.x,e.y,crit?'#ffd36b':'#ffe69a',crit?6:3);if(e.hp<=0)kill(e)}
+function hurt(e,d,crit){if(e.dead)return;d=Math.round(d*B().damageM);e.hp-=d;e.fl=.08;txt(e.x,e.y-10,Math.round(d),crit?'#ffd36b':'#fff');burst(e.x,e.y,crit?'#ffd36b':'#ffe69a',crit?6:3);if(e.hp<=0)kill(e)}
 function kill(e){e.dead=1;S.kills++;S.wk++;combo++;comboT=2.5;S.st.combo=Math.max(S.st.combo,combo);let b=B(),c=Math.ceil((3+S.wave/2)*(e.t==2?3:e.t==3?30:e.mini?.3:1)*b.coinM*cw().cm*(1+Math.min(combo,40)*.03));S.coins+=c;txt(e.x,e.y,'+'+c,'#ffe38a');burst(e.x,e.y,e.boss?'#ffd36b':'#f28cae',e.boss?30:10);
- if(Math.random()<.04+(e.t==2?.06:0)){S.parts++;txt(e.x,e.y-14,'+1⚙','#9fb4ff')}gain(e.boss?15:e.t==2?2:1);
+ if(Math.random()<.04+(e.t==2?.06:0)+.015*L('salvage')){S.parts++;txt(e.x,e.y-14,'+1⚙','#9fb4ff')}gain(e.boss?15:e.t==2?2:1);
  if(e.boss){S.sp+=2;S.parts+=4+Math.floor(S.wave/5);S.st.bosses++;toast('БОСС УНИЧТОЖЕН! +2 ОЧКА НАВЫКОВ');vib(80);shake=12}}
 function gain(n){S.xp+=n*B().xpM;while(S.xp>=xpNeed()){S.xp-=xpNeed();S.level++;S.sp++;toast('УРОВЕНЬ '+S.level+' · +1 ОЧКО НАВЫКОВ');beep(990,.12)}}
 function hitCore(d){if(S.sh>0){let a=Math.min(S.sh,d);S.sh-=a;d-=a}S.hp-=d;shake=6;vib(20)}
@@ -94,7 +105,7 @@ function update(dt){frame+=dt;S.st.totalTime=(S.st.totalTime||0)+dt;comboT-=dt;i
   for(let e of enemies){if(!e.dead&&!(s.hit&&s.hit.includes(e))&&Math.hypot(s.x-e.x,s.y-e.y)<e.r+5){hurt(e,s.d,s.crit);if(s.pr>0){s.pr--;(s.hit=s.hit||[]).push(e)}else s.life=0;break}}});
  shots=shots.filter(s=>s.life>0&&s.x>-20&&s.x<W+20&&s.y>-20&&s.y<H+20);enemies=enemies.filter(e=>!e.dead);
  beamFx.forEach(p=>p.life-=dt);beamFx=beamFx.filter(p=>p.life>0);parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt});parts=parts.filter(p=>p.life>0);texts.forEach(t=>{t.y-=28*dt;t.life-=dt});texts=texts.filter(t=>t.life>0);
- if(S.wk>=need()&&!enemies.some(e=>e.boss)){S.wave++;S.wk=0;S.best=Math.max(S.best,S.wave);S.wb[S.world]=Math.max(S.wb[S.world]||0,S.wave);S.parts++;S.sh=maxSh();S.hp=Math.min(maxHp(),S.hp+10);toast('ВОЛНА '+String(S.wave).padStart(2,'0'));save()}
+ if(S.wk>=need()&&!enemies.some(e=>e.boss)){S.wave++;S.wk=0;S.best=Math.max(S.best,S.wave);S.wb[S.world]=Math.max(S.wb[S.world]||0,S.wave);S.parts++;S.sh=maxSh();S.hp=Math.min(maxHp(),S.hp+10+5*L('repair'));toast('ВОЛНА '+String(S.wave).padStart(2,'0'));save()}
  if(S.hp<=0){S.hp=0;over=true;save();show('ЯДРО РАЗРУШЕНО','Волна '+S.wave+'. Можно восстановить ядро за '+reviveCost()+'✦ или начать заново (кредиты делятся пополам).','НАЧАТЬ ЗАНОВО',true)}}
 const reviveCost=()=>200+S.wave*20;
 function draw(){ctx.clearRect(0,0,W,H);ctx.save();if(shake)ctx.translate(rand(-shake,shake)/2,rand(-shake,shake)/2);
@@ -133,11 +144,8 @@ $('pause').onclick=()=>{if(!over&&!paused)show('ПАУЗА','')};
 $('resume').onclick=()=>{if(over){S.coins=Math.floor(S.coins/2);S.wave=1;S.wk=0;S.xp=0;resetField();over=false}hideP()};
 $('revive').onclick=()=>{if(S.coins>=reviveCost()){S.coins-=reviveCost();S.hp=maxHp()*.6;enemies=enemies.filter(e=>!e.boss);shots=[];over=false;hideP();toast('ЯДРО ВОССТАНОВЛЕНО')}else toast('НЕДОСТАТОЧНО КРЕДИТОВ')};
 $('repair').onclick=()=>{if(over||paused||modal)return;let c=repCost();if(S.coins>=c&&S.hp<maxHp()){S.coins-=c;S.hp=Math.min(maxHp(),S.hp+35);toast('ЯДРО ОТРЕМОНТИРОВАНО')}else toast(S.coins<c?'НЕДОСТАТОЧНО КРЕДИТОВ':'ЗДОРОВЬЕ УЖЕ ПОЛНОЕ')};
-$('power').onclick=()=>{if(over||paused||modal)return;if(S.coins<40){toast('НЕДОСТАТОЧНО КРЕДИТОВ');return}S.coins-=40;enemies.forEach(e=>hurt(e,45+clickDmg()*2,0));shake=8;vib(40);beep(200,.2);toast('ИМПУЛЬС АКТИВИРОВАН')};
-function renderTree(){$('sp').textContent=S.sp;let gr=$('treeGrid');gr.innerHTML='';BR.forEach((bn,bi)=>{let col=document.createElement('div');col.className='col';col.innerHTML='<h3>'+bn+'</h3>';
- TREE.filter(n=>n.b==bi).forEach(n=>{let lv=L(n.id),lock=n.req&&L(n.req[0])<n.req[1],cost=lv+1,mx=lv>=n.max,b=document.createElement('button');b.className='node'+(lock?' lock':'')+(mx?' max':'')+(!lock&&!mx&&S.sp>=cost?' can':'');
-  b.innerHTML='<b>'+n.n+'</b><small>'+n.d+'</small><em>'+(mx?'МАКС':lock?'НУЖНО: '+TREE.find(x=>x.id==n.req[0]).n+' '+n.req[1]:lv+'/'+n.max+' · '+cost+'◆')+'</em>';
-  b.onclick=()=>{if(lock||mx||S.sp<cost)return;S.sp-=cost;S.sk[n.id]=lv+1;Bt=0;if(n.id=='hp')S.hp+=25;save();renderTree();beep(760,.06)};col.appendChild(b)});gr.appendChild(col)})}
+$('power').onclick=()=>{if(over||paused||modal)return;if(S.coins<40){toast('НЕДОСТАТОЧНО КРЕДИТОВ');return}S.coins-=40;enemies.forEach(e=>hurt(e,45+clickDmg()*2+B().pulse,0));shake=8;vib(40);beep(200,.2);toast('ИМПУЛЬС АКТИВИРОВАН')};
+function renderTree(){$('sp').textContent=S.sp;let gr=$('treeGrid');gr.innerHTML='';BR.forEach((bn,bi)=>{let col=document.createElement('div');col.className='skill-branch';col.innerHTML='<h3>'+bn+'</h3><div class="skill-chain"></div>';let chain=col.querySelector('.skill-chain');TREE.filter(n=>n.b==bi).forEach(n=>{let lv=L(n.id),req=n.req&&L(n.req[0])<n.req[1],cost=lv+1,mx=lv>=n.max,can=!req&&!mx&&S.sp>=cost,b=document.createElement('button');b.className='node skill-node'+(req?' lock':'')+(mx?' max':'')+(can?' can':'');b.innerHTML='<span class="skill-glyph">'+(['✦','⬡','⌘','◈','✧'][bi])+'</span><b>'+n.n+'</b><small>'+n.d+'</small><em>'+(mx?'МАКСИМУМ':req?'🔒 Требуется '+TREE.find(x=>x.id==n.req[0]).n+' · '+n.req[1]+' ур.':'УРОВЕНЬ '+lv+'/'+n.max+' · ЦЕНА '+cost+'◆')+'</em>';b.onclick=()=>{if(req||mx||S.sp<cost)return;S.sp-=cost;S.sk[n.id]=lv+1;Bt=0;if(n.id=='hp')S.hp+=25;save();renderTree();beep(760,.06)};chain.appendChild(b)});gr.appendChild(col)})}
 $('tree').onclick=()=>{if(over||paused||modal)return;paused=true;renderTree();$('treeBox').classList.add('show')};
 $('closeTree').onclick=()=>{$('treeBox').classList.remove('show');paused=false;last=performance.now()};
 cv.addEventListener('pointerdown',e=>{if(paused||modal||over)return;let r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=W/2,cy=H/2,b=B();S.st.taps++;
