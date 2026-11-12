@@ -1,7 +1,7 @@
-const CACHE_NAME='pixel-orbit-v50';
-const APP_SHELL=['./','./index.html','./style.css','./game.js','./hub.js','./online.js','./raid.js','./push-client.js','./push-config.js','./manifest.webmanifest'];
+const CACHE_NAME='pixel-orbit-v7-0';
+const APP_SHELL=['./','./index.html','./style.css','./game.js','./hub.js','./v6-ui.js','./quests-ui.js','./music.js','./world-textures/orion.png','./world-textures/biosphere.png','./world-textures/cryo.png','./world-textures/ember.png','./world-textures/crystal.png','./world-textures/toxic.png','./world-textures/desert.png','./world-textures/machine.png','./world-textures/void.png','./world-textures/solar.png','./online.js','./raid.js','./push-client.js','./push-config.js','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_SHELL)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('push',event=>{let data={title:'PIXEL ORBIT',body:'Новое событие в секторе.',url:'./'};try{data={...data,...(event.data?.json()||{})}}catch(e){}event.waitUntil(self.registration.showNotification(data.title,{body:data.body,icon:'./icon-192.png',badge:'./icon-192.png',tag:data.tag||'pixel-orbit-event',renotify:true,data:{url:data.url||'./'},vibrate:[120,60,120]}));});
 self.addEventListener('notificationclick',event=>{event.notification.close();const url=event.notification.data?.url||'./';event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{for(const c of list){if('focus'in c){c.navigate(url);return c.focus()}}return clients.openWindow(url)}));});
 self.addEventListener('fetch',e=>{if(e.request.method==='GET'&&new URL(e.request.url).origin===self.location.origin)e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request)));});

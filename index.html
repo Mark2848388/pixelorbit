@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#191c25">
-<meta name="description" content="Pixel Orbit Infinite — космическая idle-игра с картой секторов, древом навыков и кооперативными рейдами."><title>PIXEL ORBIT INFINITE v5.0</title>
+<meta name="description" content="Pixel Orbit Infinite — космическая idle-игра с картой секторов, древом навыков и кооперативными рейдами."><title>PIXEL ORBIT INFINITE v7.0</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,11 +12,94 @@
   <header class="top">
     <button class="profile" id="goProfile"><img class="avatar" id="avatarImg" alt=""><div><b id="pname">ПИЛОТ-07</b><small id="ptitle">Новобранец</small><div class="xp"><i id="xpbar"></i></div></div></button>
     <div class="money"><div><span>✦</span><b id="coins">0</b></div><div class="parts"><span>⚙</span><b id="parts">0</b></div></div>
-    <button class="iconbtn" id="pause">Ⅱ</button>
+    <button class="iconbtn" id="musicBtn" title="Музыка">♪</button><button class="iconbtn" id="pause">Ⅱ</button>
   </header>
 
   <div id="pages">
-    <section class="page show" id="pg-battle">
+        <section class="page show" id="pg-home">
+      <div class="home-screen home-dashboard">
+        <div class="home-heading">
+          <div class="home-brand"><b>PIXEL ORBIT</b><i>INFINITE</i><small>ГАЛАКТИЧЕСКАЯ ЭКСПЕДИЦИЯ</small></div>
+          <button class="home-event" id="eventBoss" aria-label="Вызвать ивентового босса">
+            <span class="event-copy"><small>АКТИВНОЕ СОБЫТИЕ</small><b>ВТОРЖЕНИЕ ДРЕВНЕГО</b><em>ИВЕНТОВЫЙ БОСС · НАГРАДЫ</em></span>
+            <span class="event-art" aria-hidden="true">☠</span>
+            <span class="event-arrow">›</span>
+          </button>
+        </div>
+
+        <div class="dash-stats">
+          <div class="dash-stat"><small>УРОВЕНЬ</small><b id="homeLevel">1</b></div>
+          <div class="dash-stat"><small>ВОЛНА</small><b id="homeWave">1</b></div>
+          <div class="dash-stat"><small>МИР</small><b id="homeWorld">ОРИОН</b></div>
+          <div class="dash-stat"><small>СЕКТОР</small><b id="homeSector">1</b></div>
+        </div>
+
+        <div class="dash-goal" id="homeGoal">
+          <small>СЛЕДУЮЩАЯ ЦЕЛЬ</small>
+          <b id="homeGoalText">Дойди до волны 10</b>
+        </div>
+
+        <div class="dash-grid">
+          <button class="dash-card primary" id="homeBattle" aria-label="Начать битву">
+            <i>⚔</i><b>НАЧАТЬ БИТВУ</b><small>Защити ядро</small>
+          </button>
+          <button class="dash-card" data-go="profile" aria-label="Профиль">
+            <i>☺</i><b>ПРОФИЛЬ</b><small>Имя, аватар, задания</small>
+          </button>
+          <button class="dash-card friends" data-go="profile" data-focus="friends" id="homeFriendsBtn" aria-label="Друзья">
+            <i>♟</i><b>ДРУЗЬЯ</b><small>Добавить · аватары</small>
+          </button>
+          <button class="dash-card" data-go="shop" aria-label="Магазин">
+            <i>🛒</i><b>МАГАЗИН</b><small>Скины и ресурсы</small>
+          </button>
+          <button class="dash-card" data-go="station" aria-label="Станция">
+            <i>▣</i><b>СТАНЦИЯ</b><small>Постройки и сбор</small>
+          </button>
+          <button class="dash-card" data-go="map" aria-label="Карта миров">
+            <i>◎</i><b>КАРТА МИРОВ</b><small>Секторы и планеты</small>
+          </button>
+          <button class="dash-card" data-go="raid" aria-label="Рейд">
+            <i>☄</i><b>РЕЙД</b><small>Кооперативный босс</small>
+          </button>
+          <button class="dash-card" id="homeBoss" aria-label="Вызвать босса">
+            <i>☠</i><b>БОСС</b><small>Волна <span id="homeBossWave">1</span></small>
+          </button>
+          <button class="dash-card" id="sideEvent" aria-label="События">
+            <i>🎁</i><b>СОБЫТИЯ</b><small>Ивенты и награды</small>
+          </button>
+          <button class="dash-card" id="homeQuests" data-go="quests" aria-label="Задания">
+            <i>✦</i><b>ЗАДАНИЯ</b><small>Ежедневные · недельные</small>
+          </button>
+        </div>
+
+        <div class="home-bottom">
+          <div class="home-social"><span class="online-dot"></span><b>ЭКИПАЖ ГАЛАКТИКИ</b><small id="homeOnlineHint">ПИЛОТЫ ГОТОВЫ К ВЫЛЕТУ</small></div>
+          <button class="home-primary" id="homePrimaryBattle">⚔ НАЧАТЬ БИТВУ <span>›</span></button>
+        </div>
+      </div>
+    </section>
+<section class="page" id="pg-quests">
+      <div class="quests-page">
+        <div class="shop-head"><small>ОРБИТАЛЬНЫЕ КОНТРАКТЫ</small><h1>ЗАДАНИЯ</h1>
+          <p>Ежедневные, недельные и месячные цели. Выполняй и забирай награды. Серия дней: <b id="qStreak">0</b></p>
+        </div>
+        <div class="q-tabs">
+          <button class="q-tab active" data-q="daily">ЕЖЕДНЕВНЫЕ</button>
+          <button class="q-tab" data-q="weekly">НЕДЕЛЬНЫЕ</button>
+          <button class="q-tab" data-q="monthly">МЕСЯЧНЫЕ</button>
+        </div>
+        <div id="qList" class="q-list"></div>
+        <div class="q-synergy" id="qSynergy"><small>СИНЕРГИИ СТАНЦИИ</small><p id="qSynText">Построй комбинации зданий для мощных бонусов.</p></div>
+        <button class="big" id="questsBack">НАЗАД</button>
+      </div>
+    </section>
+<section class="page" id="pg-shop">
+      <div class="shop-page"><div class="shop-head"><small>ОРБИТАЛЬНЫЙ МАРКЕТ</small><h1>МАГАЗИН</h1><p>Косметика, ресурсы и усилители. Покупки сохраняются локально.</p><b>✦ <span id="shopCoins">0</span>　◆ <span id="shopParts">0</span></b></div>
+      <h2>СКИНЫ ПИЛОТА</h2><div class="skin-grid" id="skinGrid"></div>
+      <h2>РЕСУРСЫ</h2><div class="resource-shop"><button data-buy="parts">КУПИТЬ 10 ДЕТАЛЕЙ <b>120 ✦</b></button><button data-buy="credits">КОНВЕРТИРОВАТЬ 5 ◆ В 250 ✦ <b>5 ◆</b></button><button data-buy="repair">НАБОР РЕМОНТА <b>80 ✦</b></button></div>
+      <button class="big" id="shopBack">НАЗАД</button></div>
+    </section>
+    <section class="page" id="pg-battle">
       <section class="hud">
         <div class="mission"><small id="worldName">СЕКТОР · ОРИОН</small><b>ЗАЩИТИ ЯДРО</b><div class="bar"><i id="hpbar"></i></div><small id="hptext">100 / 100</small></div>
         <div class="wave"><small>ВОЛНА</small><b id="wave">01</b><small id="wprog">0 / 11</small></div>
@@ -33,6 +116,9 @@
           <button class="action" id="repair"><span>✚</span><small>РЕМОНТ <em id="repCost">25</em>✦</small></button>
           <button class="action" id="power"><span>✧</span><small>ИМПУЛЬС <em>40</em>✦</small></button>
           <button class="action" id="tree"><span>⬡</span><small>НАВЫКИ <em id="spb"></em></small></button>
+          <button class="action ability" id="heavyStrike"><span>✹</span><small>СИЛЬНЫЙ УДАР</small></button>
+          <button class="action ability" id="timeFreeze"><span>❄</span><small>ЗАМОРОЗКА ВРЕМЕНИ</small></button>
+          <button class="action ability" id="chainLightning"><span>ϟ</span><small>ЦЕПНАЯ МОЛНИЯ</small></button>
         </div>
       </footer>
     </section>
@@ -66,15 +152,31 @@
   </div>
 
   <nav class="tabs" id="tabs">
-    <button data-t="battle" class="on"><i>◉</i><small>БОЙ</small><u></u></button>
+    <button data-t="home" class="on"><i>⌂</i><small>ГЛАВНАЯ</small><u></u></button>
+    <button data-t="battle"><i>⚔</i><small>БОЙ</small><u></u></button>
     <button data-t="station"><i>▣</i><small>СТАНЦИЯ</small><u></u></button>
     <button data-t="map"><i>◎</i><small>КАРТА</small><u></u></button>
-    <button data-t="raid"><i>☄</i><small>РЕЙД</small><u></u></button><button data-t="profile"><i>☺</i><small>ПРОФИЛЬ</small><u></u></button>
+    <button data-t="raid"><i>☄</i><small>РЕЙД</small><u></u></button><button data-t="shop"><i>🛒</i><small>МАГАЗИН</small><u></u></button><button data-t="profile"><i>☺</i><small>ПРОФИЛЬ</small><u></u></button>
   </nav>
 
   <div class="paused" id="paused"><div class="panel"><h2 id="pTitle">ПАУЗА</h2><p id="pMsg"></p><button class="big" id="resume">ПРОДОЛЖИТЬ</button><button class="big" id="revive" style="display:none">ВОССТАНОВИТЬ ЯДРО</button></div></div>
   <div class="paused" id="daily"><div class="panel"><small>ЕЖЕДНЕВНЫЙ БОНУС</small><h2 id="dTitle">ДЕНЬ 1</h2><div class="days" id="dDays"></div><p id="dMsg"></p><button class="big" id="dClaim">ЗАБРАТЬ</button></div></div>
-  <div class="paused" id="cropper"><div class="panel"><small>СВОЯ АВАТАРКА</small><canvas id="cropCv" width="200" height="200"></canvas><p>Двигай фото пальцем, масштаб — ползунком</p><input type="range" id="cropZ" min="100" max="300" value="100"><button class="big" id="cropOk">ГОТОВО</button><button class="big" id="cropNo">ОТМЕНА</button></div></div>
+  
+  <div class="chat-modal" id="chatModal">
+    <div class="chat-panel">
+      <div class="chat-head">
+        <img id="chatAv" alt="">
+        <b id="chatName">Пилот</b>
+        <button class="chat-close" id="chatClose">✕</button>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input">
+        <input id="chatInput" placeholder="Написать сообщение..." maxlength="280">
+        <button id="chatSend">➤</button>
+      </div>
+    </div>
+  </div>
+<div class="paused" id="cropper"><div class="panel"><small>СВОЯ АВАТАРКА</small><canvas id="cropCv" width="200" height="200"></canvas><p>Двигай фото пальцем, масштаб — ползунком</p><input type="range" id="cropZ" min="100" max="300" value="100"><button class="big" id="cropOk">ГОТОВО</button><button class="big" id="cropNo">ОТМЕНА</button></div></div>
 </div>
 <script src="game.js"></script>
 <script src="hub.js"></script>
@@ -84,5 +186,8 @@
 <script src="push-config.js"></script>
 <script src="push-client.js"></script>
 <script src="pwa.js"></script>
+<script src="music.js"></script>
+<script src="v6-ui.js"></script>
+<script src="quests-ui.js"></script>
 </body>
 </html>

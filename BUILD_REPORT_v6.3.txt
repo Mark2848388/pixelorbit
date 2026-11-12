@@ -1,0 +1,12 @@
+PIXEL ORBIT INFINITE v6.3 — VISUAL / COMBAT UPDATE
+Changes:
+- Main galaxy dashboard remains the initial landing page; main battle CTA is now wired.
+- Replaced home galaxy image and planet PNG rendering with CSS-generated pixel-style planets and orbital artwork.
+- Reworked enemy rendering in game canvas into distinct hand-drawn pixel silhouettes for four enemy classes, with boss crown/energy details and health bars.
+- Added functional Strong Strike, Time Freeze, and Chain Lightning abilities with cooldowns.
+- Time Freeze pauses enemy movement and enemy projectiles for 4.5 seconds.
+- Removed planet PNG and galaxy WEBP dependencies from the home screen and service-worker app shell.
+Validation:
+- JavaScript syntax checks passed for game.js, hub.js, v6-ui.js, online.js, raid.js, push-client.js, service-worker.js.
+- HTML IDs checked for duplicates.
+- Full browser/device gameplay and multiplayer server tests not performed.

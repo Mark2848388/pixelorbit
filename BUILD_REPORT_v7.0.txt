@@ -1,0 +1,13 @@
+PIXEL ORBIT INFINITE v7.0 — QUESTS / BUILDINGS / SYNERGIES / MUSIC / CHAT
+Changes:
+- Daily / Weekly / Monthly quest system with progress tracking and claimable rewards.
+- 12 new station buildings with unique bonuses.
+- Building synergy network (7 combinations) granting multiplicative bonuses.
+- Procedural Web Audio music (home ambient + battle) with toggle.
+- Private chat UI + local history between friends; optional Supabase table.
+- Home dashboard gains Quests card; design polish for cards and modals.
+- Service Worker cache: pixel-orbit-v7-0.
+- Save key remains pixelorbit_v4 (backward compatible fields).
+Validation:
+- node --check game.js, hub.js, online.js, music.js, quests-ui.js passed.
+- New files: music.js, quests-ui.js, README_v7.0_RU.txt.

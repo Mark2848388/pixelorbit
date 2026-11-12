@@ -52,9 +52,3 @@ SUPABASE
 
 БЕЗОПАСНОСТЬ
 В клиенте присутствует только publishable key (публичный ключ проекта). Никогда не добавляйте service_role / secret key в index.html, game.js, hub.js или online.js.
-
-
-АКТУАЛЬНАЯ ВЕРСИЯ v5.0: смотри README_v5.0_RU.txt. В ней описаны панель FULL DEVELOPER, активация владельца и SQL-миграции.
-
-
-АКТУАЛЬНАЯ ВЕРСИЯ v5.0: смотри README_v5.0_RU.txt. В ней описаны панель FULL DEVELOPER, активация владельца и SQL-миграции.

@@ -1,0 +1,20 @@
+PIXEL ORBIT INFINITE v6.1 — HOME SCREEN REBUILD
+Implemented:
+- Replaced the schematic CSS-only home galaxy with a detailed pixel-art galaxy scene asset.
+- Rebuilt the home composition around the reference: brand/event header, left quick menu on wide layouts, large galaxy map with interactive hotspots, base/fleet/boss/sectors/reward/ship and prominent battle CTA.
+- Added responsive portrait layout; sidebar collapses on narrow screens so the map remains large.
+- Fixed page routing: home and shop are now included in hub.js page registry.
+- Fixed data-go navigation to avoid double-triggering.
+- Added event boss triggers from the event panel, enemy fleet and side event.
+- Added home sector number binding.
+- Bumped PWA cache and precached home-galaxy.webp.
+Preserved:
+- local save key pixelorbit_v4.
+Validation:
+- node --check passed for game.js, hub.js, v6-ui.js, online.js, raid.js, push-client.js, service-worker.js.
+- manifest.webmanifest valid JSON.
+- HTML has 87 unique IDs and no duplicates.
+- ZIP integrity verified after packaging.
+Limitations:
+- Chromium screenshot smoke test timed out; no claim of full Android runtime validation.
+- Generated galaxy artwork is visual background; hotspots and navigation are functional overlays.

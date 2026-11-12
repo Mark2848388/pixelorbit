@@ -1,0 +1,10 @@
+PIXEL ORBIT INFINITE v6.0 BUILD REPORT
+Static checks:
+- node --check: game.js, hub.js, v6-ui.js, online.js, raid.js, push-client.js, service-worker.js
+- manifest.webmanifest: valid JSON
+- index.html: 90 unique IDs
+- World definitions: 20
+- Duplicate raid.js / push-client.js script includes removed
+Runtime status:
+- Chromium headless attempt did not finish within the smoke-test timeout due to the perpetual animation loop.
+- No claim of full runtime, Android, PWA install, or live multiplayer verification.

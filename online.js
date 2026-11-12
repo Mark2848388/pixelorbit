@@ -70,8 +70,14 @@
   }
   function friendCard(r,p,kind) {
     const online=isOnline(p.user_id), state=online?'В СЕТИ':`БЫЛ(А) ${relativeSeen(p.last_seen)}`;
-    const action=kind==='incoming'?`<button class="btn go" data-friend-accept="${r.id}">ПРИНЯТЬ</button><button class="btn" data-friend-decline="${r.id}">ОТКЛОНИТЬ</button>`:kind==='outgoing'?'<small class="po-pending">ОЖИДАЕТ ОТВЕТА</small>':`<button class="btn" data-open-friend="${esc(p.user_id)}">ПРОФИЛЬ</button><button class="btn bad" data-remove-friend="${esc(p.user_id)}">УДАЛИТЬ</button>`;
-    return `<div class="po-friend-card"><div class="po-friend-main"><div class="po-friend-avatar">${esc((p.display_name||'П').slice(0,1).toUpperCase())}</div><span class="po-presence ${online?'online':''}"></span><div class="po-friend-info"><b>${esc(p.display_name||'ПИЛОТ')}</b><small>${esc(p.pilot_code||'')} · УР. ${Number(p.level)||1}</small><small class="po-friend-status">${state}</small></div></div><div class="po-friend-actions">${action}</div></div>`;
+    const action=kind==='incoming'?`<button class="btn go" data-friend-accept="${r.id}">ПРИНЯТЬ</button><button class="btn" data-friend-decline="${r.id}">ОТКЛОНИТЬ</button>`:kind==='outgoing'?'<small class="po-pending">ОЖИДАЕТ ОТВЕТА</small>':`<button class="btn" data-open-friend="${esc(p.user_id)}">ПРОФИЛЬ</button><button class="btn go" data-chat-friend="${esc(p.user_id)}" data-chat-name="${esc(p.display_name||'Пилот')}">ЧАТ</button><button class="btn bad" data-remove-friend="${esc(p.user_id)}">УДАЛИТЬ</button>`;
+    let avHtml=esc((p.display_name||'П').slice(0,1).toUpperCase());
+    try{
+      const av=p.avatar||'a0';
+      if(typeof window.avURL==='function'){avHtml=`<img src="${window.avURL(av)}" alt="">`;}
+      else if(String(av).startsWith('data:')){avHtml=`<img src="${av}" alt="">`;}
+    }catch(e){}
+    return `<div class="po-friend-card"><div class="po-friend-main"><div class="po-friend-avatar">${avHtml}<span class="po-presence ${online?'online':''}"></span></div><div class="po-friend-info"><b>${esc(p.display_name||'ПИЛОТ')}</b><small>${esc(p.pilot_code||'')} · УР. ${Number(p.level)||1}</small><small class="po-friend-status">${state}</small></div></div><div class="po-friend-actions">${action}</div></div>`;
   }
   async function loadFriends() {
     const el=$('friendList'); if(!session||!el)return;
@@ -165,86 +171,12 @@
     paintRaid($('raidStatus')?.textContent);await loadRaidBoard();
     if($('raidTokens'))$('raidTokens').textContent=String(data.raid_tokens||0);
   }
-  window.POOnline={joinRaid,attackRaid,refreshDeveloperPanel,loadPlayerGameExtras,getRaidState:()=>raidState,getPresence:()=>raidChannel?Object.keys(raidChannel.presenceState()||{}).length:0,getOwnDamage:()=>ownRaidDamage,isJoined:()=>!!raidChannel};
-  async function loadPlayerGameExtras(){
-    if(!session)return;
-    const {data:events}=await db.from('pixel_game_events').select('id,title,description,starts_at,ends_at,reward_coins,reward_parts').eq('active',true).gt('ends_at',new Date().toISOString()).order('starts_at').limit(10);
-    const active=(events||[]).filter(x=>new Date(x.starts_at)<=new Date());
-    const upcoming=(events||[]).filter(x=>new Date(x.starts_at)>new Date());
-    const eventEl=$('pixelLiveEvents');if(eventEl)eventEl.innerHTML=[...active.map(x=>`<div><b>● LIVE · ${esc(x.title)}</b><br>${esc(x.description||'Событие активно')}<br>Награда: ${Number(x.reward_coins)}✦ / ${Number(x.reward_parts)}⚙ · до ${new Date(x.ends_at).toLocaleString('ru-RU')}</div>`),...upcoming.map(x=>`<div><b>◷ СКОРО · ${esc(x.title)}</b><br>${esc(x.description||'Скоро начнётся')}<br>Старт: ${new Date(x.starts_at).toLocaleString('ru-RU')}</div>`) ].join('')||'<div>Сейчас нет активных событий. Следи за новыми экспедициями!</div>';
-    const {data:items}=await db.from('pixel_dev_items').select('item_code,quantity,updated_at').eq('user_id',session.user.id).order('updated_at',{ascending:false});
-    const {data:catalog}=await db.from('pixel_item_catalog').select('item_code,title,description,rarity').eq('active',true);const catalogMap=new Map((catalog||[]).map(x=>[x.item_code,x]));
-    const inv=$('myPixelInventory');if(inv)inv.innerHTML=(items||[]).filter(x=>Number(x.quantity)>0).map(x=>{const c=catalogMap.get(x.item_code)||{title:x.item_code,rarity:'unknown',description:''};return `<div><b>${esc(c.title)}</b> · ${esc(c.rarity.toUpperCase())} × ${Number(x.quantity).toLocaleString('ru-RU')}<br>${esc(c.description)}</div>`}).join('')||'<div>Инвентарь пока пуст. Особые предметы появятся в событиях и наградах.</div>';
-    const {data:worlds}=await db.from('pixel_world_config').select('world_id,enabled,coin_multiplier,enemy_multiplier,notice');
-    if(worlds){const cfg={};worlds.forEach(x=>cfg[x.world_id]=x);window.PO.worldConfig=cfg;const current=window.PO.S?.().world;if(current!==0&&cfg[current]?.enabled===false){window.PO.setWorld(0);setStatus('ТЕКУЩИЙ СЕКТОР ЗАКРЫТ РАЗРАБОТЧИКОМ · ПЕРЕХОД В ОРИОН');}}
-  }
-
-  async function refreshDeveloperPanel() {
-    const panel=$('developerPanel'); if(!panel)return;
-    if(!session){panel.style.display='none';return;}
-    panel.style.display='block';
-    const status=$('devStatus'),bootstrap=$('devBootstrap'),consoleEl=$('devConsole');
-    if(status)status.textContent='ПРОВЕРКА ПРАВ РАЗРАБОТЧИКА…';
-    const uid=session.user.id;
-    if($('devUid'))$('devUid').textContent=uid;
-    if($('devSql'))$('devSql').textContent=`insert into public.pixel_developers(user_id, role, active) values ('${uid}','owner',true) on conflict(user_id) do update set role='owner', active=true;`;
-    const {data:access,error}=await db.rpc('pixel_is_developer');
-    if(error){if(status)status.textContent='СИСТЕМА РАЗРАБОТЧИКА ЕЩЁ НЕ УСТАНОВЛЕНА · Выполни SUPABASE_SETUP_v5.0_DEVELOPER.sql';if(bootstrap)bootstrap.style.display='grid';if(consoleEl)consoleEl.style.display='none';return;}
-    if(!access?.is_developer){if(status)status.textContent='АККАУНТ НЕ АКТИВИРОВАН КАК РАЗРАБОТЧИК';if(bootstrap)bootstrap.style.display='grid';if(consoleEl)consoleEl.style.display='none';return;}
-    if(bootstrap)bootstrap.style.display='none';if(consoleEl)consoleEl.style.display='block';
-    if(status)status.textContent=`ДОСТУП ПОДТВЕРЖДЁН · ${String(access.role||'ADMIN').toUpperCase()} · UID ${uid}`;
-    const {data:overview,error:oe}=await db.rpc('pixel_dev_overview');
-    if(oe){if(status)status.textContent='Ошибка панели: '+oe.message;return;}
-    if($('devOverview'))$('devOverview').innerHTML=`<div><b>${Number(overview.players)||0}</b><small>ПИЛОТОВ</small></div><div><b>${Number(overview.active_events)||0}</b><small>СОБЫТИЙ</small></div><div><b>${Number(overview.enabled_worlds)||0}/10</b><small>МИРОВ ОТКРЫТО</small></div>`;
-    const {data:players,error:pe}=await db.rpc('pixel_dev_list_players');
-    if(pe){if(status)status.textContent='Ошибка списка игроков: '+pe.message;return;}
-    const select=$('devPlayerSelect'),old=select?.value;
-    if(select){select.innerHTML='<option value="">ВЫБЕРИ ПИЛОТА</option>'+(players||[]).map(x=>`<option value="${esc(x.user_id)}">${esc(x.display_name||'ПИЛОТ')} · ${esc(x.pilot_code||'')} · ур. ${Number(x.level)||1}${x.is_banned?' · LIMITED':''}</option>`).join('');if(old&&players.some(x=>x.user_id===old))select.value=old;}
-    const {data:events}=await db.from('pixel_game_events').select('id,title,starts_at,ends_at,active,reward_coins,reward_parts').order('created_at',{ascending:false}).limit(8);
-    if($('devEventList'))$('devEventList').innerHTML=(events||[]).map(x=>`<div><b>${esc(x.title)}</b> · ${x.active?'АКТИВНО':'ВЫКЛЮЧЕНО'}<br>${new Date(x.starts_at).toLocaleString('ru-RU')} — ${new Date(x.ends_at).toLocaleString('ru-RU')}<br>Награда: ${Number(x.reward_coins)}✦ / ${Number(x.reward_parts)}⚙</div>`).join('')||'<div>Событий пока нет.</div>';
-    const {data:itemCatalog}=await db.from('pixel_item_catalog').select('item_code,title,description,rarity').eq('active',true).order('created_at',{ascending:false}).limit(30);
-    if($('devItemCatalog'))$('devItemCatalog').innerHTML=(itemCatalog||[]).map(x=>`<div><b>${esc(x.title)}</b> · ${esc(x.rarity.toUpperCase())} · <code>${esc(x.item_code)}</code><br>${esc(x.description||'')}</div>`).join('')||'<div>Каталог пуст. Создай первый предмет выше.</div>';
-    const {data:worlds}=await db.from('pixel_world_config').select('world_id,enabled,coin_multiplier,enemy_multiplier,notice').order('world_id');
-    if($('devWorldList'))$('devWorldList').innerHTML=(worlds||[]).map(x=>`<div>СЕКТОР ${Number(x.world_id)+1} · ${x.enabled?'ОТКРЫТ':'ЗАКРЫТ'} · ✦ ×${x.coin_multiplier} · ВРАГИ ×${x.enemy_multiplier}${x.notice?' · '+esc(x.notice):''}</div>`).join('');
-    if($('devAudit'))$('devAudit').innerHTML=(overview.audit||[]).map(x=>`<div><b>${esc(x.action)}</b> · ${x.target?esc(x.target):'СИСТЕМА'}<br>${new Date(x.at).toLocaleString('ru-RU')} · ${esc(JSON.stringify(x.details||{}))}</div>`).join('')||'<div>Действий пока нет.</div>';
-    if(worlds?.length){const w=worlds.find(x=>String(x.world_id)===$('devWorldId')?.value)||worlds[0];if($('devWorldId'))$('devWorldId').value=String(w.world_id);if($('devWorldCoins'))$('devWorldCoins').value=w.coin_multiplier;if($('devWorldEnemies'))$('devWorldEnemies').value=w.enemy_multiplier;if($('devWorldNotice'))$('devWorldNotice').value=w.notice||'';if($('devWorldEnabled'))$('devWorldEnabled').checked=!!w.enabled;}
-  }
-  const devTarget=()=> $('devPlayerSelect')?.value||'';
-  async function devAction(rpc,args,successText){
-    if(!session)return;
-    const {data,error}=await db.rpc(rpc,args);
-    if(error){setStatus('DEVELOPER ERROR: '+error.message);return false;}
-    setStatus(successText||'КОМАНДА ВЫПОЛНЕНА',true);await loadPlayerGameExtras();await refreshDeveloperPanel();return data||true;
-  }
-  async function devGrantResources(){const target=devTarget();if(!target){setStatus('СНАЧАЛА ВЫБЕРИ ИГРОКА');return;}const coins=Number($('devCoins')?.value),parts=Number($('devParts')?.value);if(!Number.isSafeInteger(coins)||!Number.isSafeInteger(parts)||coins<0||parts<0){setStatus('ВВЕДИ КОРРЕКТНЫЕ СУММЫ');return;}if(!confirm(`Выдать пилоту ${coins} кредитов и ${parts} деталей? Облачное сохранение будет обновлено.`))return;await devAction('pixel_dev_grant_resources',{p_target:target,p_coins:coins,p_parts:parts},'РЕСУРСЫ ДОБАВЛЕНЫ В ОБЛАЧНОЕ СОХРАНЕНИЕ');}
-  async function devCreateItem(){const code=$('devItemCode')?.value.trim().toLowerCase(),title=$('devItemTitle')?.value.trim(),description=$('devItemDesc')?.value||'',rarity=$('devItemRarity')?.value||'common';if(!code||!title){setStatus('ВВЕДИ КОД И НАЗВАНИЕ ПРЕДМЕТА');return;}await devAction('pixel_dev_create_item',{p_code:code,p_title:title,p_description:description,p_rarity:rarity},'ПРЕДМЕТ СОЗДАН В КАТАЛОГЕ');}
-  async function devGrantItem(){const target=devTarget(),code=$('devItemCode')?.value.trim(),qty=Number($('devItemQty')?.value);if(!target||!code||!Number.isSafeInteger(qty)||qty<1){setStatus('ВЫБЕРИ ИГРОКА, КОД ПРЕДМЕТА И КОЛИЧЕСТВО');return;}await devAction('pixel_dev_grant_item',{p_target:target,p_item_code:code,p_quantity:qty},'ПРЕДМЕТ ЗАПИСАН В СЕРВЕРНЫЙ ИНВЕНТАРЬ');}
-  async function devSetPlayer(banned){const target=devTarget();if(!target){setStatus('СНАЧАЛА ВЫБЕРИ ИГРОКА');return;}if(!confirm(banned?'Ограничить этому пилоту доступ к Pixel Orbit Online?':'Снять ограничение с пилота?'))return;await devAction('pixel_dev_set_player',{p_target:target,p_banned:banned,p_note:$('devPlayerNote')?.value||''},banned?'ONLINE ДОСТУП ОГРАНИЧЕН':'ОГРАНИЧЕНИЕ СНЯТО');}
-  async function devCreateEvent(){const title=$('devEventTitle')?.value.trim(),start=$('devEventStart')?.value,end=$('devEventEnd')?.value;if(!title||!start||!end){setStatus('ЗАПОЛНИ НАЗВАНИЕ, НАЧАЛО И КОНЕЦ СОБЫТИЯ');return;}const a=new Date(start),b=new Date(end);if(!(b>a)){setStatus('КОНЕЦ СОБЫТИЯ ДОЛЖЕН БЫТЬ ПОЗЖЕ НАЧАЛА');return;}await devAction('pixel_dev_create_event',{p_title:title,p_description:$('devEventDesc')?.value||'',p_starts_at:a.toISOString(),p_ends_at:b.toISOString(),p_reward_coins:Number($('devEventCoins')?.value)||0,p_reward_parts:Number($('devEventParts')?.value)||0},'СОБЫТИЕ СОЗДАНО');}
-  async function devSaveWorld(){const id=Number($('devWorldId')?.value),coins=Number($('devWorldCoins')?.value),enemies=Number($('devWorldEnemies')?.value);if(!Number.isFinite(coins)||!Number.isFinite(enemies)){setStatus('ПРОВЕРЬ МНОЖИТЕЛИ');return;}await devAction('pixel_dev_set_world',{p_world_id:id,p_enabled:!!$('devWorldEnabled')?.checked,p_coin_multiplier:coins,p_enemy_multiplier:enemies,p_notice:$('devWorldNotice')?.value||''},'НАСТРОЙКИ СЕКТОРА СОХРАНЕНЫ');}
-  document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;try{
-    if(b.id==='devRefresh')await refreshDeveloperPanel();
-    if(b.id==='devGrantResources')await devGrantResources();
-    if(b.id==='devCreateItem')await devCreateItem();
-    if(b.id==='devGrantItem')await devGrantItem();
-    if(b.id==='devBanPlayer')await devSetPlayer(true);
-    if(b.id==='devUnbanPlayer')await devSetPlayer(false);
-    if(b.id==='devCreateEvent')await devCreateEvent();
-    if(b.id==='devSaveWorld')await devSaveWorld();
-    if(b.id==='devCopyUid'){await navigator.clipboard?.writeText(session?.user?.id||'');setStatus('UID СКОПИРОВАН',true);}
-    if(b.id==='devCopySql'){await navigator.clipboard?.writeText($('devSql')?.textContent||'');setStatus('SQL-КОМАНДА СКОПИРОВАНА',true);}
-  }catch(err){setStatus('DEVELOPER ERROR: '+(err?.message||err));}});
-  $('devWorldId')?.addEventListener('change',async()=>{const {data}=await db.from('pixel_world_config').select('enabled,coin_multiplier,enemy_multiplier,notice').eq('world_id',Number($('devWorldId').value)).maybeSingle();if(data){$('devWorldEnabled').checked=!!data.enabled;$('devWorldCoins').value=data.coin_multiplier;$('devWorldEnemies').value=data.enemy_multiplier;$('devWorldNotice').value=data.notice||'';}});
-
+  window.POOnline={joinRaid,attackRaid,getRaidState:()=>raidState,getPresence:()=>raidChannel?Object.keys(raidChannel.presenceState()||{}).length:0,getOwnDamage:()=>ownRaidDamage,isJoined:()=>!!raidChannel};
   async function connected() {
     const {data:{session:s}}=await db.auth.getSession();session=s;updatePanels();
     if(!session){lastConnectedUser=null;setStatus('НЕ ВОШЛИ В АККАУНТ');return;}
-    const {data:playerFlag}=await db.from('pixel_player_flags').select('is_banned,note').eq('user_id',session.user.id).maybeSingle();
-    if(playerFlag?.is_banned){await db.auth.signOut();lastConnectedUser=null;setStatus('ONLINE ДОСТУП ОГРАНИЧЕН РАЗРАБОТЧИКОМ · '+(playerFlag.note||''));return;}
     if(lastConnectedUser===session.user.id&&lobby)return;lastConnectedUser=session.user.id;
     const p=await makeProfile();if(p.error){setStatus('Ошибка профиля: '+p.error.message);return;}
-    await loadPlayerGameExtras();
-    await refreshDeveloperPanel();
     const {data:ownProfile}=await db.from('pilot_profiles').select('raid_tokens').eq('user_id',session.user.id).maybeSingle();
     if(ownProfile&&game()?.prof)game().prof.raidTokens=Number(ownProfile.raid_tokens)||0;
     await startPresence();await refreshBoard();await loadFriends();await submitScore();
@@ -272,7 +204,7 @@
     try{localStorage.setItem('pixelorbit_v4',JSON.stringify(data.save_data));location.reload();}catch(e){setStatus('Не удалось применить сохранение: '+e.message);}
   }
   async function addFriend() {
-    const code=$('friendCode')?.value.trim().toUpperCase();if(!session||!/^PO-[A-Z0-9]{6}$/.test(code||'')){setStatus('Введи корректный код PO-XXXXXX.');return;}
+    const code=$('friendCode')?.value.trim().toUpperCase();if(!session||!/^PO-[A-Z0-9]{6}$/.test(code||'')){setStatus('Введи код друга в формате PO-XXXXXX (кнопка копирования в профиле).');return;}
     const {data:profile,error}=await db.from('pilot_profiles').select('user_id').eq('pilot_code',code).maybeSingle();
     if(error||!profile){setStatus('Пилот с таким кодом не найден. Он должен хотя бы раз войти в сеть.');return;}
     if(profile.user_id===session.user.id){setStatus('Нельзя добавить самого себя.');return;}
@@ -308,6 +240,56 @@
   $('friendSearch')?.addEventListener('input',()=>{const q=($('friendSearch')?.value||'').trim().toLowerCase();document.querySelectorAll('#friendList .po-friend-card').forEach(card=>{card.style.display=card.textContent.toLowerCase().includes(q)?'':'none';});});
   db.auth.onAuthStateChange((_event,s)=>{session=s;updatePanels();if(s){lastConnectedUser=null;setTimeout(()=>connected(),0);}else{if(lobby)db.removeChannel(lobby);lobby=null;if(raidChannel)db.removeChannel(raidChannel);raidChannel=null;clearInterval(raidPoller);lastConnectedUser=null;setStatus('НЕ ВОШЛИ В АККАУНТ');paintRaid('Войди в сеть, чтобы присоединиться к рейду.');}});
   const profileRoot=$('profBody');
-  if(profileRoot)new MutationObserver(()=>{updatePanels();if(session){refreshBoard();loadFriends();refreshDeveloperPanel();}}).observe(profileRoot,{childList:true});
+  if(profileRoot)new MutationObserver(()=>{updatePanels();if(session){refreshBoard();loadFriends();}}).observe(profileRoot,{childList:true});
   connected();
+
+  /* ---- private chat (local + optional supabase) ---- */
+  let chatTarget = null;
+  function chatKey(uid){ return 'po_chat_' + (session?.user?.id||'local') + '_' + uid; }
+  function loadChatHistory(uid){
+    try{ return JSON.parse(localStorage.getItem(chatKey(uid))||'[]'); }catch(e){return []}
+  }
+  function saveChatHistory(uid, msgs){
+    try{ localStorage.setItem(chatKey(uid), JSON.stringify(msgs.slice(-80))); }catch(e){}
+  }
+  function renderChat(){
+    const box = $('chatMsgs'); if(!box||!chatTarget) return;
+    const msgs = loadChatHistory(chatTarget);
+    box.innerHTML = msgs.map(m => `<div class="chat-msg ${m.me?'me':'them'}">${esc(m.text)}<br><small style="opacity:.5;font-size:10px">${new Date(m.t).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</small></div>`).join('') || '<p style="text-align:center;color:#6a7;padding:20px">Начни переписку</p>';
+    box.scrollTop = box.scrollHeight;
+  }
+  function openChat(uid, name, av){
+    chatTarget = uid;
+    $('chatName').textContent = name || 'Пилот';
+    const img = $('chatAv');
+    if(img){ img.src = (window.avURL ? avURL(av||'a0') : ''); img.style.imageRendering='pixelated'; }
+    $('chatModal').classList.add('show');
+    renderChat();
+    $('chatInput')?.focus();
+  }
+  function sendChat(){
+    const inp = $('chatInput'); if(!inp||!chatTarget) return;
+    const text = (inp.value||'').trim(); if(!text) return;
+    const msgs = loadChatHistory(chatTarget);
+    msgs.push({me:true, text, t:Date.now()});
+    saveChatHistory(chatTarget, msgs);
+    inp.value = '';
+    renderChat();
+    // optional: try supabase insert if table exists
+    if(session && db){
+      db.from('pilot_messages').insert({
+        sender_id: session.user.id,
+        receiver_id: chatTarget,
+        body: text.slice(0,280)
+      }).then(({error})=>{ if(error) console.log('chat sync skip', error.message); });
+    }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-chat-friend]');
+    if(b){ openChat(b.dataset.chatFriend, b.dataset.chatName, 'a0'); return; }
+    if(e.target.id==='chatClose' || e.target.closest('#chatClose')){ $('chatModal')?.classList.remove('show'); chatTarget=null; }
+    if(e.target.id==='chatSend') sendChat();
+  });
+  $('chatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') sendChat(); });
+
 })();

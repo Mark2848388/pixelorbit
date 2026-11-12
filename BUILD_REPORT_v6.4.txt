@@ -1,0 +1,14 @@
+PIXEL ORBIT INFINITE v6.4 — DASHBOARD / SKINS / SOCIAL / OFFLINE
+Changes:
+- Main screen: galaxy map removed from home. Clean dashboard with large action cards (Battle, Profile, Friends, Shop, Station, Map, Raid, Boss, Events).
+- Next goal block on home (wave / boss / world / skin targets).
+- Character slightly stronger: base tap damage 14→19, plus level scaling.
+- Offline rewards strengthened (up to 8h, coins + parts).
+- Friends: real avatars in list (via avURL), clearer add-by-code UI, home shortcut scrolls to friends.
+- New pilot skins: Sergey Nechaev (Atomic Heart), Halloween, Alien Cat, Cyber Neon, Nebula — distinct silhouettes in battle.
+- Existing skins retained. Shop cards tagged with data-skin for previews.
+- Service Worker cache: pixel-orbit-v6-4.
+Validation:
+- node --check passed for game.js, hub.js, v6-ui.js, online.js.
+- HTML home section replaced without map hotspots.
+- Full device multiplayer test not performed.

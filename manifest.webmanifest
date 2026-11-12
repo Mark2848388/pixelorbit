@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Pixel Orbit Infinite",
+  "name": "Pixel Orbit Infinite v6.2",
   "short_name": "Pixel Orbit",
-  "description": "Космическая idle-игра с картой, навыками и кооперативными рейдами.",
+  "description": "Pixel Orbit Infinite — галактическая экспедиция с обновлённым главным экраном.",
   "lang": "ru",
   "start_url": "./",
   "scope": "./",
@@ -11,7 +11,7 @@
     "fullscreen",
     "standalone"
   ],
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0d1223",
   "theme_color": "#191c25",
   "icons": [

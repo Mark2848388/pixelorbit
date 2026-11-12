@@ -1,0 +1,13 @@
+PIXEL ORBIT INFINITE v6.2 BUILD REPORT
+Static checks passed:
+- node --check: game.js, hub.js, v6-ui.js, online.js, raid.js, push-client.js, service-worker.js
+- manifest.webmanifest parses as JSON
+- 85 unique HTML IDs; no duplicates
+- 10 world-node buttons, indices 0–9
+- 10 transparent planet PNG assets exist and are referenced by markup and Service Worker
+- Service Worker cache version pixel-orbit-v6-2
+- ZIP integrity check passed
+
+Not tested:
+- Full touch interaction on a physical Android device
+- Supabase multiplayer with real accounts
